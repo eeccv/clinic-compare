@@ -1,0 +1,78 @@
+/* app/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --rose: #E91E8C;
+  --rose-light: #F472B6;
+  --rose-dark: #BE185D;
+  --gold: #F59E0B;
+  --cream: #FFF8F5;
+  --dark: #1A0A10;
+}
+
+@layer base {
+  body {
+    @apply bg-cream text-dark;
+    font-family: var(--font-arabic), 'IBM Plex Sans Arabic', sans-serif;
+  }
+  h1, h2, h3, h4, h5 {
+    @apply font-semibold leading-tight;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-rose-600 hover:bg-rose-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5;
+  }
+  .btn-secondary {
+    @apply bg-white hover:bg-rose-50 text-rose-600 border border-rose-200 px-6 py-3 rounded-xl font-medium transition-all duration-200;
+  }
+  .card {
+    @apply bg-white rounded-2xl shadow-sm border border-rose-50 hover:shadow-md transition-shadow duration-200;
+  }
+  .badge {
+    @apply inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium;
+  }
+  .badge-verified {
+    @apply badge bg-emerald-50 text-emerald-700;
+  }
+  .badge-featured {
+    @apply badge bg-amber-50 text-amber-700;
+  }
+  .section {
+    @apply py-16 px-4 max-w-7xl mx-auto;
+  }
+}
+
+/* Star rating */
+.stars {
+  color: #F59E0B;
+  letter-spacing: -1px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #FFF8F5; }
+::-webkit-scrollbar-thumb { background: #F9A8D4; border-radius: 3px; }
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up {
+  animation: fadeUp 0.5s ease forwards;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
