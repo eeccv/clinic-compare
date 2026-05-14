@@ -8,15 +8,16 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
+  id        String    @id @default(cuid())
+  email     String    @unique
   name      String
   password  String
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role      Role      @default(USER)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   clinics   Clinic[]
   reviews   Review[]
+  bookings  Booking[]
 }
 
 enum Role {
@@ -25,10 +26,10 @@ enum Role {
   ADMIN
 }
 
-model Clinic bookings    Booking[]{
-  id          String         @id @default(cuid())
+model Clinic {
+  id          String          @id @default(cuid())
   name        String
-  slug        String         @unique
+  slug        String          @unique
   description String?
   city        String
   address     String?
@@ -37,14 +38,15 @@ model Clinic bookings    Booking[]{
   website     String?
   logo        String?
   images      String[]
-  verified    Boolean        @default(false)
-  featured    Boolean        @default(false)
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  verified    Boolean         @default(false)
+  featured    Boolean         @default(false)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
   doctors     Doctor[]
   services    ClinicService[]
   reviews     Review[]
-  owner       User?          @relation(fields: [ownerId], references: [id])
+  bookings    Booking[]
+  owner       User?           @relation(fields: [ownerId], references: [id])
   ownerId     String?
 }
 
@@ -59,13 +61,14 @@ model Doctor {
 }
 
 model Service {
-  id          String         @id @default(cuid())
+  id          String          @id @default(cuid())
   name        String
-  slug        String         @unique
+  slug        String          @unique
   category    String
   description String?
   image       String?
   clinics     ClinicService[]
+  bookings    Booking[]
 }
 
 model ClinicService {
@@ -95,13 +98,40 @@ model Review {
 }
 
 model BlogPost {
-  id          String   @id @default(cuid())
-  title       String
-  slug        String   @unique
-  content     String
-  excerpt     String?
-  image       String?
-  published   Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  content   String
+  excerpt   String?
+  image     String?
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Booking {
+  id          String        @id @default(cuid())
+  clientName  String
+  clientPhone String
+  clientEmail String?
+  date        DateTime
+  time        String
+  notes       String?
+  status      BookingStatus @default(PENDING)
+  totalPrice  Float?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  clinic      Clinic        @relation(fields: [clinicId], references: [id])
+  clinicId    String
+  service     Service?      @relation(fields: [serviceId], references: [id])
+  serviceId   String?
+  user        User?         @relation(fields: [userId], references: [id])
+  userId      String?
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
 }
