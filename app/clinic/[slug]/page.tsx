@@ -85,12 +85,10 @@ export default function ClinicPage({ params }: { params: { slug: string } }) {
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <a href={`tel:${clinic.phone}`} className="btn-primary text-sm py-2 px-5 text-center">📞 اتصلي</a>
-              <a href={`https://wa.me/${clinic.whatsapp?.replace(/\D/g,'')}`}
-                className="bg-green-500 hover:bg-green-600 text-white text-sm py-2 px-5 rounded-xl text-center transition-colors">
-                💬 واتساب
+              <a href={`/book/${clinic.id}`}
+                className="bg-rose-600 hover:bg-rose-700 text-white text-sm py-2 px-5 rounded-xl text-center transition-colors">
+                📅 احجزي
               </a>
-              <button className="btn-secondary text-sm py-2 px-5">+ قارني</button>
             </div>
           </div>
         </div>
@@ -145,7 +143,6 @@ export default function ClinicPage({ params }: { params: { slug: string } }) {
             {/* Reviews */}
             <div className="card p-6">
               <h2 className="text-xl font-bold mb-5">⭐ تقييمات العملاء</h2>
-              {/* Rating summary */}
               <div className="flex gap-6 mb-6 p-4 bg-rose-50 rounded-xl">
                 <div className="text-center">
                   <div className="text-5xl font-bold text-gray-800">{clinic.avgRating}</div>
@@ -164,7 +161,6 @@ export default function ClinicPage({ params }: { params: { slug: string } }) {
                   ))}
                 </div>
               </div>
-              {/* Reviews list */}
               <div className="space-y-4">
                 {clinic.reviews.map(rev => (
                   <div key={rev.id} className="border-b border-rose-50 pb-4 last:border-0">
@@ -212,13 +208,13 @@ export default function ClinicPage({ params }: { params: { slug: string } }) {
               </div>
             </div>
 
-            {/* Compare CTA */}
+            {/* Book CTA */}
             <div className="card p-5 bg-rose-600 text-white border-0">
-              <h3 className="font-bold mb-2">قارني هذه العيادة</h3>
-              <p className="text-rose-100 text-sm mb-4">أضيفي هذه العيادة لقائمة المقارنة</p>
-              <Link href="/compare" className="bg-white text-rose-600 font-medium py-2 px-4 rounded-lg text-sm block text-center hover:bg-rose-50 transition-colors">
-                فتح المقارنة ←
-              </Link>
+              <h3 className="font-bold mb-2">احجزي موعدك الآن</h3>
+              <p className="text-rose-100 text-sm mb-4">احجزي مباشرة عبر واتساب بسهولة</p>
+              <a href={`/book/${clinic.id}`} className="bg-white text-rose-600 font-medium py-2 px-4 rounded-lg text-sm block text-center hover:bg-rose-50 transition-colors">
+                📅 احجزي الآن ←
+              </a>
             </div>
           </div>
         </div>
