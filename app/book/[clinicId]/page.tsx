@@ -44,15 +44,17 @@ export default function BookPage() {
   const [selectedService, setSelectedService] = useState<string | null>(null)
   const [clientName, setClientName] = useState('')
   const [clientPhone, setClientPhone] = useState('')
-  const [confirmed, setConfirmed] = useState(false)
+  const [salonWaLink, setSalonWaLink] = useState('')
+  const [clientWaLink, setClientWaLink] = useState('')
 
   const days = getDays()
   const service = SALON.services.find(s => s.name === selectedService)
 
   const sendWhatsApp = () => {
-    if (!selectedDay || !selectedTime || !selectedService || !clientName || !clientPhone) return
+    if (selectedDay === null || !selectedTime || !selectedService || !clientName || !clientPhone) return
     const day = days[selectedDay]
-    const invoice = `🌸 *تأكيد موعد — ${SALON.name}*\n\n` +
+    const invoice =
+      `🌸 *تأكيد موعد — ${SALON.name}*\n\n` +
       `👤 الاسم: ${clientName}\n` +
       `📱 الجوال: ${clientPhone}\n` +
       `✂️ الخدمة: ${selectedService}\n` +
@@ -61,22 +63,11 @@ export default function BookPage() {
       `💰 السعر: ${service?.price} ريال\n\n` +
       `شكراً لاختيارك ${SALON.name} 💕`
 
-    // رسالة للصالون
-    window.open(`https://wa.me/${SALON.whatsapp}?text=${encodeURIComponent(invoice)}`, '_blank')
-    // رسالة للعميلة
-    setTimeout(() => {
-      const clientMsg = `🌸 *تم تأكيد موعدك في ${SALON.name}*\n\n` +
-        `✂️ الخدمة: ${selectedService}\n` +
-        `📅 التاريخ: ${day.label} ${day.day} ${day.month}\n` +
-        `🕐 الوقت: ${selectedTime}\n` +
-        `💰 السعر: ${service?.price} ريال\n\n` +
-        `نراكِ قريباً 💕`
-      const cleanPhone = clientPhone.replace(/\D/g, '')
-      const phone = cleanPhone.startsWith('0') ? '966' + cleanPhone.slice(1) : cleanPhone
-      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(clientMsg)}`, '_blank')
-    }, 1000)
+    const cleanPhone = clientPhone.replace(/\D/g, '')
+    const phone = cleanPhone.startsWith('0') ? '966' + cleanPhone.slice(1) : cleanPhone
 
-    setConfirmed(true)
+    setSalonWaLink(`https://wa.me/${SALON.whatsapp}?text=${encodeURIComponent(invoice)}`)
+    setClientWaLink(`https://wa.me/${phone}?text=${encodeURIComponent(invoice)}`)
     setStep(4)
   }
 
@@ -92,6 +83,7 @@ export default function BookPage() {
 
       <div className="max-w-2xl mx-auto px-4 py-8">
         <div className="bg-white rounded-2xl shadow-sm border border-rose-100 overflow-hidden">
+
           {/* Header */}
           <div className="bg-rose-600 text-white p-6 text-center">
             <div className="text-4xl mb-2">💇‍♀️</div>
@@ -103,14 +95,18 @@ export default function BookPage() {
           {step < 4 && (
             <div className="flex border-b border-rose-50">
               {['الخدمة', 'التاريخ', 'بياناتك'].map((s, i) => (
-                <div key={i} className={`flex-1 py-3 text-center text-sm font-medium transition-colors ${step === i+1 ? 'text-rose-600 border-b-2 border-rose-600' : step > i+1 ? 'text-green-500' : 'text-gray-400'}`}>
-                  {step > i+1 ? '✓' : i+1}. {s}
+                <div key={i} className={`flex-1 py-3 text-center text-sm font-medium transition-colors ${
+                  step === i + 1 ? 'text-rose-600 border-b-2 border-rose-600' :
+                  step > i + 1 ? 'text-green-500' : 'text-gray-400'
+                }`}>
+                  {step > i + 1 ? '✓' : i + 1}. {s}
                 </div>
               ))}
             </div>
           )}
 
           <div className="p-6">
+
             {/* Step 1: اختيار الخدمة */}
             {step === 1 && (
               <div>
@@ -118,7 +114,9 @@ export default function BookPage() {
                 <div className="space-y-3">
                   {SALON.services.map(s => (
                     <button key={s.name} onClick={() => setSelectedService(s.name)}
-                      className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all ${selectedService === s.name ? 'border-rose-500 bg-rose-50' : 'border-gray-100 hover:border-rose-200'}`}>
+                      className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all ${
+                        selectedService === s.name ? 'border-rose-500 bg-rose-50' : 'border-gray-100 hover:border-rose-200'
+                      }`}>
                       <span className="font-medium text-gray-800">{s.name}</span>
                       <span className="font-bold text-rose-600">{s.price} ريال</span>
                     </button>
@@ -137,8 +135,10 @@ export default function BookPage() {
                 <h2 className="font-bold text-lg mb-4 text-gray-800">اختاري التاريخ</h2>
                 <div className="flex gap-2 overflow-x-auto pb-2 mb-6">
                   {days.map((d, i) => (
-                    <button key={i} onClick={() => setSelectedDay(i)}
-                      className={`flex-shrink-0 flex flex-col items-center p-3 rounded-xl border-2 min-w-[70px] transition-all ${selectedDay === i ? 'border-rose-500 bg-rose-50' : 'border-gray-100 hover:border-rose-200'}`}>
+                    <button key={i} onClick={() => { setSelectedDay(i); setSelectedTime(null) }}
+                      className={`flex-shrink-0 flex flex-col items-center p-3 rounded-xl border-2 min-w-[70px] transition-all ${
+                        selectedDay === i ? 'border-rose-500 bg-rose-50' : 'border-gray-100 hover:border-rose-200'
+                      }`}>
                       <span className="text-xs text-gray-500">{d.label}</span>
                       <span className="text-xl font-bold text-gray-800 mt-1">{d.day}</span>
                       <span className="text-xs text-gray-400">{d.month}</span>
@@ -154,7 +154,11 @@ export default function BookPage() {
                         const booked = BOOKED.includes(t)
                         return (
                           <button key={t} disabled={booked} onClick={() => setSelectedTime(t)}
-                            className={`py-3 rounded-xl border-2 text-sm font-medium transition-all ${booked ? 'border-gray-100 bg-gray-50 text-gray-300 cursor-not-allowed' : selectedTime === t ? 'border-rose-500 bg-rose-50 text-rose-600' : 'border-gray-100 hover:border-rose-200 text-gray-700'}`}>
+                            className={`py-3 rounded-xl border-2 text-sm font-medium transition-all ${
+                              booked ? 'border-gray-100 bg-gray-50 text-gray-300 cursor-not-allowed' :
+                              selectedTime === t ? 'border-rose-500 bg-rose-50 text-rose-600' :
+                              'border-gray-100 hover:border-rose-200 text-gray-700'
+                            }`}>
                             {booked ? '🚫' : '🕐'} {t}
                           </button>
                         )
@@ -180,7 +184,6 @@ export default function BookPage() {
               <div>
                 <h2 className="font-bold text-lg mb-4 text-gray-800">بياناتك</h2>
 
-                {/* ملخص الحجز */}
                 {selectedDay !== null && (
                   <div className="bg-rose-50 rounded-xl p-4 mb-6 space-y-2 text-sm">
                     <div className="flex justify-between">
@@ -234,7 +237,8 @@ export default function BookPage() {
               <div className="text-center py-6">
                 <div className="text-6xl mb-4">🎉</div>
                 <h2 className="text-xl font-bold text-gray-800 mb-2">تم تأكيد حجزك!</h2>
-                <p className="text-gray-500 text-sm mb-6">تم إرسال تفاصيل الموعد عبر واتساب</p>
+                <p className="text-gray-500 text-sm mb-6">اضغطي على الزر لإرسال التفاصيل عبر واتساب</p>
+
                 <div className="bg-rose-50 rounded-xl p-5 text-right space-y-3 text-sm mb-6">
                   <div className="flex justify-between">
                     <span className="text-gray-500">الاسم</span>
@@ -257,11 +261,23 @@ export default function BookPage() {
                     <span className="font-bold text-rose-600">{service?.price} ريال</span>
                   </div>
                 </div>
-                <Link href="/" className="block w-full bg-rose-600 text-white font-medium py-3 rounded-xl text-center">
-                  العودة للرئيسية
-                </Link>
+
+                <div className="space-y-3">
+                  <a href={salonWaLink} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-xl transition-colors">
+                    💬 إرسال للصالون عبر واتساب
+                  </a>
+                  <a href={clientWaLink} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full bg-green-100 hover:bg-green-200 text-green-700 font-medium py-3 rounded-xl transition-colors">
+                    📱 إرسال الفاتورة لجوالي
+                  </a>
+                  <Link href="/" className="block w-full border border-rose-200 text-rose-600 font-medium py-3 rounded-xl text-center">
+                    العودة للرئيسية
+                  </Link>
+                </div>
               </div>
             )}
+
           </div>
         </div>
       </div>
