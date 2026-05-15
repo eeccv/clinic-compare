@@ -2,11 +2,11 @@
 import Link from 'next/link'
 import { Metadata } from 'next'
 
-const MOCK_CLINIC = {
+const MOCK_SALON = {
   id: '1',
-  name: 'عيادة لوز للتجميل',
-  slug: 'louz-clinic',
-  description: 'عيادة متخصصة في أحدث تقنيات التجميل تحت إشراف أطباء معتمدين. نقدم خدمات متكاملة في مجال التجميل الطبي والجراحي بأعلى معايير الجودة والسلامة.',
+  name: 'صالون لوز للتجميل',
+  slug: 'louz-salon',
+  description: 'مشغل نسائي متخصص في خدمات الشعر والعناية بالبشرة والمكياج. نقدم أرقى خدمات التجميل بأيدي متخصصات معتمدات بأعلى معايير الجودة.',
   city: 'الرياض',
   address: 'حي النزهة، شارع الأمير سلطان، الرياض',
   phone: '+966 11 456 7890',
@@ -16,36 +16,38 @@ const MOCK_CLINIC = {
   avgRating: 4.8,
   reviewCount: 124,
   images: [],
-  doctors: [
-    { id: '1', name: 'د. سارة العمري', specialty: 'جراحة التجميل', experience: 12, image: null },
-    { id: '2', name: 'د. منى الشهري', specialty: 'الأمراض الجلدية', experience: 8, image: null },
+  staff: [
+    { id: '1', name: 'أ. سارة العمري', specialty: 'تصفيف وصبغ الشعر', experience: 12, image: null },
+    { id: '2', name: 'أ. منى الشهري', specialty: 'مكياج وعناية بالبشرة', experience: 8, image: null },
   ],
   services: [
-    { name: 'البوتوكس', price: 800, priceMax: 1500, notes: 'حسب المنطقة المعالجة' },
-    { name: 'الفيلر', price: 1200, priceMax: 2500, notes: 'سيرينج واحد' },
-    { name: 'تقشير الجلد بالليزر', price: 1500, priceMax: 3000, notes: 'جلسة كاملة' },
-    { name: 'علاج حب الشباب', price: 400, priceMax: 800, notes: 'جلسة' },
+    { name: 'قص وتصفيف الشعر', price: 80, priceMax: 200, notes: 'حسب طول الشعر' },
+    { name: 'صبغ الشعر', price: 200, priceMax: 600, notes: 'حسب الطول والنوع' },
+    { name: 'كيراتين وفرد', price: 400, priceMax: 900, notes: 'حسب طول الشعر' },
+    { name: 'مكياج عرائس', price: 600, priceMax: 1500, notes: 'شامل التسريحة' },
+    { name: 'مانيكير وباديكير', price: 80, priceMax: 150, notes: 'جلسة كاملة' },
+    { name: 'إزالة الشعر', price: 50, priceMax: 200, notes: 'حسب المنطقة' },
   ],
   reviews: [
-    { id: '1', rating: 5, author: 'أم محمد', comment: 'عيادة رائعة والدكتورة محترفة جداً. النتيجة فاقت توقعاتي!', createdAt: '2024-12-01' },
+    { id: '1', rating: 5, author: 'أم محمد', comment: 'صالون رائع والأخت سارة محترفة جداً. النتيجة فاقت توقعاتي!', createdAt: '2024-12-01' },
     { id: '2', rating: 4, author: 'ريم', comment: 'خدمة ممتازة وأسعار معقولة. سأعود بالتأكيد', createdAt: '2024-11-15' },
-    { id: '3', rating: 5, author: 'نورا السعيد', comment: 'أفضل عيادة في الرياض! الفريق الطبي محترف ومتعاون', createdAt: '2024-11-01' },
+    { id: '3', rating: 5, author: 'نورا السعيد', comment: 'أفضل صالون في الرياض! الفريق محترف ومتعاون', createdAt: '2024-11-01' },
   ]
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   return {
-    title: `${MOCK_CLINIC.name} — أسعار وتقييمات`,
-    description: MOCK_CLINIC.description,
+    title: `${MOCK_SALON.name} — أسعار وتقييمات`,
+    description: MOCK_SALON.description,
   }
 }
 
-export default function ClinicPage({ params }: { params: { slug: string } }) {
-  const clinic = MOCK_CLINIC
+export default function SalonPage({ params }: { params: { slug: string } }) {
+  const salon = MOCK_SALON
   const ratingDist = [5,4,3,2,1].map(r => ({
     rating: r,
-    count: clinic.reviews.filter(rev => rev.rating === r).length,
-    pct: (clinic.reviews.filter(rev => rev.rating === r).length / clinic.reviews.length) * 100
+    count: salon.reviews.filter(rev => rev.rating === r).length,
+    pct: (salon.reviews.filter(rev => rev.rating === r).length / salon.reviews.length) * 100
   }))
 
   return (
@@ -53,11 +55,11 @@ export default function ClinicPage({ params }: { params: { slug: string } }) {
       {/* Navbar */}
       <nav className="bg-white border-b border-rose-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center gap-3">
-          <Link href="/" className="text-xl font-bold text-rose-600">💎 كلينك كومبير</Link>
+          <Link href="/" className="text-xl font-bold text-rose-600">💅 صالوني</Link>
           <span className="text-gray-300">/</span>
           <Link href="/search" className="text-sm text-gray-500 hover:text-rose-600">البحث</Link>
           <span className="text-gray-300">/</span>
-          <span className="text-sm text-gray-700">{clinic.name}</span>
+          <span className="text-sm text-gray-700">{salon.name}</span>
         </div>
       </nav>
 
@@ -66,26 +68,26 @@ export default function ClinicPage({ params }: { params: { slug: string } }) {
         <div className="card p-6 mb-6">
           <div className="flex gap-6 items-start">
             <div className="w-24 h-24 bg-rose-50 rounded-2xl flex items-center justify-center text-5xl flex-shrink-0">
-              🏥
+              💇‍♀️
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-2xl font-bold text-gray-800">{clinic.name}</h1>
-                {clinic.verified && <span className="badge-verified">✓ موثقة</span>}
-                {clinic.featured && <span className="badge-featured">⭐ مميزة</span>}
+                <h1 className="text-2xl font-bold text-gray-800">{salon.name}</h1>
+                {salon.verified && <span className="badge-verified">✓ موثق</span>}
+                {salon.featured && <span className="badge-featured">⭐ مميز</span>}
               </div>
-              <p className="text-gray-500 text-sm mb-3">📍 {clinic.address}</p>
-              <p className="text-gray-600 leading-relaxed">{clinic.description}</p>
+              <p className="text-gray-500 text-sm mb-3">📍 {salon.address}</p>
+              <p className="text-gray-600 leading-relaxed">{salon.description}</p>
               <div className="flex gap-4 mt-4">
                 <div className="flex items-center gap-1">
-                  <span className="text-amber-400">{'★'.repeat(Math.round(clinic.avgRating))}</span>
-                  <span className="font-bold">{clinic.avgRating}</span>
-                  <span className="text-gray-400 text-sm">({clinic.reviewCount} تقييم)</span>
+                  <span className="text-amber-400">{'★'.repeat(Math.round(salon.avgRating))}</span>
+                  <span className="font-bold">{salon.avgRating}</span>
+                  <span className="text-gray-400 text-sm">({salon.reviewCount} تقييم)</span>
                 </div>
               </div>
             </div>
             <div className="flex flex-col gap-2">
-              <a href={`/book/${clinic.id}`}
+              <a href={`/book/${salon.id}`}
                 className="bg-rose-600 hover:bg-rose-700 text-white text-sm py-2 px-5 rounded-xl text-center transition-colors">
                 📅 احجزي
               </a>
@@ -99,10 +101,10 @@ export default function ClinicPage({ params }: { params: { slug: string } }) {
             {/* Services & Prices */}
             <div className="card p-6">
               <h2 className="text-xl font-bold mb-5 flex items-center gap-2">
-                💉 الخدمات والأسعار
+                ✂️ الخدمات والأسعار
               </h2>
               <div className="space-y-3">
-                {clinic.services.map((s, i) => (
+                {salon.services.map((s, i) => (
                   <div key={i} className="flex items-center justify-between p-4 bg-rose-50 rounded-xl border border-rose-100">
                     <div>
                       <div className="font-semibold text-gray-800">{s.name}</div>
@@ -121,19 +123,19 @@ export default function ClinicPage({ params }: { params: { slug: string } }) {
               </div>
             </div>
 
-            {/* Doctors */}
+            {/* Staff */}
             <div className="card p-6">
-              <h2 className="text-xl font-bold mb-5">👩‍⚕️ الفريق الطبي</h2>
+              <h2 className="text-xl font-bold mb-5">👩‍🎨 فريق العمل</h2>
               <div className="grid grid-cols-2 gap-4">
-                {clinic.doctors.map(doc => (
-                  <div key={doc.id} className="bg-rose-50 rounded-xl p-4 text-center border border-rose-100">
+                {salon.staff.map(member => (
+                  <div key={member.id} className="bg-rose-50 rounded-xl p-4 text-center border border-rose-100">
                     <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-3xl mx-auto mb-3">
-                      👩‍⚕️
+                      👩‍🎨
                     </div>
-                    <div className="font-bold text-gray-800">{doc.name}</div>
-                    <div className="text-sm text-rose-600 mt-1">{doc.specialty}</div>
-                    {doc.experience && (
-                      <div className="text-xs text-gray-400 mt-1">{doc.experience} سنوات خبرة</div>
+                    <div className="font-bold text-gray-800">{member.name}</div>
+                    <div className="text-sm text-rose-600 mt-1">{member.specialty}</div>
+                    {member.experience && (
+                      <div className="text-xs text-gray-400 mt-1">{member.experience} سنوات خبرة</div>
                     )}
                   </div>
                 ))}
@@ -142,12 +144,12 @@ export default function ClinicPage({ params }: { params: { slug: string } }) {
 
             {/* Reviews */}
             <div className="card p-6">
-              <h2 className="text-xl font-bold mb-5">⭐ تقييمات العملاء</h2>
+              <h2 className="text-xl font-bold mb-5">⭐ تقييمات العميلات</h2>
               <div className="flex gap-6 mb-6 p-4 bg-rose-50 rounded-xl">
                 <div className="text-center">
-                  <div className="text-5xl font-bold text-gray-800">{clinic.avgRating}</div>
-                  <div className="text-amber-400 text-xl mt-1">{'★'.repeat(Math.round(clinic.avgRating))}</div>
-                  <div className="text-sm text-gray-400 mt-1">{clinic.reviewCount} تقييم</div>
+                  <div className="text-5xl font-bold text-gray-800">{salon.avgRating}</div>
+                  <div className="text-amber-400 text-xl mt-1">{'★'.repeat(Math.round(salon.avgRating))}</div>
+                  <div className="text-sm text-gray-400 mt-1">{salon.reviewCount} تقييم</div>
                 </div>
                 <div className="flex-1 space-y-1.5">
                   {ratingDist.map(r => (
@@ -162,7 +164,7 @@ export default function ClinicPage({ params }: { params: { slug: string } }) {
                 </div>
               </div>
               <div className="space-y-4">
-                {clinic.reviews.map(rev => (
+                {salon.reviews.map(rev => (
                   <div key={rev.id} className="border-b border-rose-50 pb-4 last:border-0">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
@@ -185,34 +187,32 @@ export default function ClinicPage({ params }: { params: { slug: string } }) {
 
           {/* Sidebar */}
           <div className="space-y-4">
-            {/* Contact */}
             <div className="card p-5">
               <h3 className="font-bold mb-4">معلومات التواصل</h3>
               <div className="space-y-3 text-sm">
-                {clinic.phone && (
+                {salon.phone && (
                   <div className="flex items-center gap-3">
                     <span>📞</span>
-                    <a href={`tel:${clinic.phone}`} className="text-rose-600 hover:underline">{clinic.phone}</a>
+                    <a href={`tel:${salon.phone}`} className="text-rose-600 hover:underline">{salon.phone}</a>
                   </div>
                 )}
-                {clinic.whatsapp && (
+                {salon.whatsapp && (
                   <div className="flex items-center gap-3">
                     <span>💬</span>
-                    <a href={`https://wa.me/${clinic.whatsapp.replace(/\D/g,'')}`} className="text-green-600 hover:underline">واتساب</a>
+                    <a href={`https://wa.me/${salon.whatsapp.replace(/\D/g,'')}`} className="text-green-600 hover:underline">واتساب</a>
                   </div>
                 )}
                 <div className="flex items-center gap-3">
                   <span>📍</span>
-                  <span className="text-gray-600">{clinic.address}</span>
+                  <span className="text-gray-600">{salon.address}</span>
                 </div>
               </div>
             </div>
 
-            {/* Book CTA */}
             <div className="card p-5 bg-rose-600 text-white border-0">
               <h3 className="font-bold mb-2">احجزي موعدك الآن</h3>
               <p className="text-rose-100 text-sm mb-4">احجزي مباشرة عبر واتساب بسهولة</p>
-              <a href={`/book/${clinic.id}`} className="bg-white text-rose-600 font-medium py-2 px-4 rounded-lg text-sm block text-center hover:bg-rose-50 transition-colors">
+              <a href={`/book/${salon.id}`} className="bg-white text-rose-600 font-medium py-2 px-4 rounded-lg text-sm block text-center hover:bg-rose-50 transition-colors">
                 📅 احجزي الآن ←
               </a>
             </div>

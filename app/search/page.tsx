@@ -2,28 +2,27 @@
 import Link from 'next/link'
 import { SERVICE_CATEGORIES, SAUDI_CITIES } from '@/lib/types'
 
-// Mock data for demonstration
-const MOCK_CLINICS = [
+const MOCK_SALONS = [
   {
-    id: '1', name: 'عيادة لوز للتجميل', slug: 'louz-clinic',
+    id: '1', name: 'صالون لوز للتجميل', slug: 'louz-salon',
     city: 'riyadh', cityAr: 'الرياض', verified: true, featured: true,
     avgRating: 4.8, reviewCount: 124,
-    services: [{ name: 'البوتوكس', price: 800, priceMax: 1500 }],
-    description: 'عيادة متخصصة في أحدث تقنيات التجميل',
+    services: [{ name: 'قص وتصفيف', price: 80, priceMax: 200 }],
+    description: 'مشغل نسائي متخصص في خدمات الشعر والمكياج',
   },
   {
-    id: '2', name: 'مركز جمال الوردة', slug: 'ward-beauty',
+    id: '2', name: 'صالون وردة الجمال', slug: 'ward-beauty',
     city: 'jeddah', cityAr: 'جدة', verified: true, featured: false,
     avgRating: 4.5, reviewCount: 89,
-    services: [{ name: 'البوتوكس', price: 650, priceMax: 1200 }],
-    description: 'خبرة 10 سنوات في عالم التجميل',
+    services: [{ name: 'كيراتين وفرد', price: 400, priceMax: 900 }],
+    description: 'خبرة 10 سنوات في خدمات التجميل النسائي',
   },
   {
-    id: '3', name: 'عيادة الأناقة', slug: 'elegance-clinic',
+    id: '3', name: 'صالون الأناقة', slug: 'elegance-salon',
     city: 'riyadh', cityAr: 'الرياض', verified: false, featured: false,
     avgRating: 4.2, reviewCount: 56,
-    services: [{ name: 'البوتوكس', price: 550, priceMax: 1000 }],
-    description: 'أسعار تنافسية وجودة عالية',
+    services: [{ name: 'مكياج عرائس', price: 600, priceMax: 1500 }],
+    description: 'أسعار تنافسية وجودة عالية في التجميل',
   },
 ]
 
@@ -39,7 +38,7 @@ export default function SearchPage({
       {/* Navbar */}
       <nav className="bg-white border-b border-rose-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="text-xl font-bold text-rose-600">💎 كلينك كومبير</Link>
+          <Link href="/" className="text-xl font-bold text-rose-600">💅 صالوني</Link>
           <div className="flex items-center gap-3">
             <Link href="/compare" className="text-sm text-gray-600 hover:text-rose-600">المقارنة</Link>
             <Link href="/register" className="btn-primary text-sm py-2 px-4">انضمي</Link>
@@ -53,7 +52,7 @@ export default function SearchPage({
           <input
             type="text"
             defaultValue={q}
-            placeholder="ابحثي عن خدمة أو عيادة..."
+            placeholder="ابحثي عن خدمة أو صالون..."
             className="flex-1 px-4 py-2.5 rounded-xl border border-rose-100 text-right outline-none focus:border-rose-300 text-sm"
           />
           <select defaultValue={city} className="px-3 py-2.5 rounded-xl border border-rose-100 text-sm outline-none">
@@ -112,16 +111,15 @@ export default function SearchPage({
 
               <label className="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" className="accent-rose-500" />
-                <span className="text-sm text-gray-700">عيادات موثقة فقط ✓</span>
+                <span className="text-sm text-gray-700">صالونات موثقة فقط ✓</span>
               </label>
             </div>
           </aside>
 
           {/* Results */}
           <div className="flex-1">
-            {/* Sort + Count */}
             <div className="flex items-center justify-between mb-4">
-              <p className="text-sm text-gray-500">{MOCK_CLINICS.length} نتيجة</p>
+              <p className="text-sm text-gray-500">{MOCK_SALONS.length} نتيجة</p>
               <select className="text-sm border border-rose-100 rounded-lg px-3 py-2 outline-none">
                 <option>الأكثر تقييماً</option>
                 <option>الأرخص سعراً</option>
@@ -130,37 +128,33 @@ export default function SearchPage({
               </select>
             </div>
 
-            {/* Clinic Cards */}
             <div className="space-y-4">
-              {MOCK_CLINICS.map(clinic => (
-                <div key={clinic.id} className="card p-5 flex gap-4">
-                  {/* Logo */}
+              {MOCK_SALONS.map(salon => (
+                <div key={salon.id} className="card p-5 flex gap-4">
                   <div className="w-20 h-20 bg-rose-50 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <span className="text-3xl">🏥</span>
+                    <span className="text-3xl">💇‍♀️</span>
                   </div>
 
-                  {/* Info */}
                   <div className="flex-1">
                     <div className="flex items-start justify-between">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-bold text-lg text-gray-800">{clinic.name}</h3>
-                          {clinic.verified && <span className="badge-verified">✓ موثقة</span>}
-                          {clinic.featured && <span className="badge-featured">⭐ مميزة</span>}
+                          <h3 className="font-bold text-lg text-gray-800">{salon.name}</h3>
+                          {salon.verified && <span className="badge-verified">✓ موثق</span>}
+                          {salon.featured && <span className="badge-featured">⭐ مميز</span>}
                         </div>
-                        <p className="text-sm text-gray-500 mb-2">📍 {clinic.cityAr}</p>
-                        <p className="text-sm text-gray-600 leading-relaxed">{clinic.description}</p>
+                        <p className="text-sm text-gray-500 mb-2">📍 {salon.cityAr}</p>
+                        <p className="text-sm text-gray-600 leading-relaxed">{salon.description}</p>
                       </div>
                       <div className="text-left flex-shrink-0 mr-4">
-                        <div className="text-amber-400 text-sm">{'★'.repeat(Math.round(clinic.avgRating))}</div>
-                        <div className="font-bold text-lg text-gray-800">{clinic.avgRating}</div>
-                        <div className="text-xs text-gray-400">{clinic.reviewCount} تقييم</div>
+                        <div className="text-amber-400 text-sm">{'★'.repeat(Math.round(salon.avgRating))}</div>
+                        <div className="font-bold text-lg text-gray-800">{salon.avgRating}</div>
+                        <div className="text-xs text-gray-400">{salon.reviewCount} تقييم</div>
                       </div>
                     </div>
 
-                    {/* Services Preview */}
                     <div className="flex items-center gap-3 mt-3 flex-wrap">
-                      {clinic.services.map(s => (
+                      {salon.services.map(s => (
                         <div key={s.name} className="bg-rose-50 border border-rose-100 rounded-lg px-3 py-1.5 text-sm">
                           <span className="text-gray-600">{s.name}: </span>
                           <span className="font-bold text-rose-600">{s.price.toLocaleString()} ريال</span>
@@ -170,14 +164,13 @@ export default function SearchPage({
                     </div>
                   </div>
 
-                  {/* Actions */}
                   <div className="flex flex-col gap-2 flex-shrink-0 justify-center">
-                    <Link href={`/clinic/${clinic.slug}`} className="btn-primary text-sm py-2 px-4 text-center">
+                    <Link href={`/clinic/${salon.slug}`} className="btn-primary text-sm py-2 px-4 text-center">
                       عرض التفاصيل
                     </Link>
-                    <button className="btn-secondary text-sm py-2 px-4">
-                      + قارني
-                    </button>
+                    <a href={`/book/${salon.id}`} className="bg-rose-600 hover:bg-rose-700 text-white text-sm py-2 px-4 rounded-xl text-center transition-colors">
+                      📅 احجزي
+                    </a>
                   </div>
                 </div>
               ))}
