@@ -35,20 +35,24 @@ export default function DashboardPage() {
   }, [])
 
   const updateStatus = async (id: string, status: string) => {
-    setLoadingId(id)
-    try {
-      const res = await fetch(`/api/bookings/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status }),
-      })
-      if (res.ok) {
-        setBookings(prev => prev.map(b => b.id === id ? { ...b, status } : b))
+  setLoadingId(id)
+  try {
+    const res = await fetch(`/api/bookings/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status }),
+    })
+    const data = await res.json()
+    if (res.ok) {
+      setBookings(prev => prev.map(b => b.id === id ? { ...b, status } : b))
+      if (data.whatsappLink) {
+        window.open(data.whatsappLink, '_blank')
       }
-    } finally {
-      setLoadingId(null)
     }
+  } finally {
+    setLoadingId(null)
   }
+}
 
   const pendingBookings = bookings.filter(b => b.status === 'PENDING')
   const otherBookings = bookings.filter(b => b.status !== 'PENDING')
