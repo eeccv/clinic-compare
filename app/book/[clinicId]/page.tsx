@@ -37,7 +37,7 @@ function getDays() {
   return days
 }
 
-export default function BookPage() {
+export default function BookPage({ params }: { params: { clinicId: string } }) {
   const [step, setStep] = useState(1)
   const [selectedDay, setSelectedDay] = useState<number | null>(null)
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
@@ -46,29 +46,70 @@ export default function BookPage() {
   const [clientPhone, setClientPhone] = useState('')
   const [salonWaLink, setSalonWaLink] = useState('')
   const [clientWaLink, setClientWaLink] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const days = getDays()
   const service = SALON.services.find(s => s.name === selectedService)
 
-  const sendWhatsApp = () => {
+  const confirmBooking = async () => {
     if (selectedDay === null || !selectedTime || !selectedService || !clientName || !clientPhone) return
-    const day = days[selectedDay]
-    const invoice =
-      `🌸 *تأكيد موعد — ${SALON.name}*\n\n` +
-      `👤 الاسم: ${clientName}\n` +
-      `📱 الجوال: ${clientPhone}\n` +
-      `✂️ الخدمة: ${selectedService}\n` +
-      `📅 التاريخ: ${day.label} ${day.day} ${day.month}\n` +
-      `🕐 الوقت: ${selectedTime}\n` +
-      `💰 السعر: ${service?.price} ريال\n\n` +
-      `شكراً لاختيارك ${SALON.name} 💕`
+    
+    setLoading(true)
+    setError('')
 
-    const cleanPhone = clientPhone.replace(/\D/g, '')
-    const phone = cleanPhone.startsWith('0') ? '966' + cleanPhone.slice(1) : cleanPhone
+    try {
+      const day = days[selectedDay]
+      const bookingDate = new Date(day.date)
 
-    setSalonWaLink(`https://wa.me/${SALON.whatsapp}?text=${encodeURIComponent(invoice)}`)
-    setClientWaLink(`https://wa.me/${phone}?text=${encodeURIComponent(invoice)}`)
-    setStep(4)
+      // حفظ الحجز في قاعدة البيانات
+      const res = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          clinicId: SALON.id,
+          clientName,
+          clientPhone,
+          date: bookingDate.toISOString(),
+          time: selectedTime,
+          serviceName: selectedService,
+          totalPrice: service?.price,
+        }),
+      })
+
+      if (!res.ok) throw new Error('فشل الحجز')
+
+      // بناء رسائل واتساب
+      const invoice =
+        `🌸 *طلب موعد جديد — ${SALON.name}*\n\n` +
+        `👤 الاسم: ${clientName}\n` +
+        `📱 الجوال: ${clientPhone}\n` +
+        `✂️ الخدمة: ${selectedService}\n` +
+        `📅 التاريخ: ${day.label} ${day.day} ${day.month}\n` +
+        `🕐 الوقت: ${selectedTime}\n` +
+        `💰 السعر: ${service?.price} ريال\n\n` +
+        `يرجى تأكيد الموعد 💕`
+
+      const clientMsg =
+        `🌸 *تم استلام طلب حجزك في ${SALON.name}*\n\n` +
+        `✂️ الخدمة: ${selectedService}\n` +
+        `📅 التاريخ: ${day.label} ${day.day} ${day.month}\n` +
+        `🕐 الوقت: ${selectedTime}\n` +
+        `💰 السعر: ${service?.price} ريال\n\n` +
+        `⏳ سيتم تأكيد موعدك قريباً من الصالون`
+
+      const cleanPhone = clientPhone.replace(/\D/g, '')
+      const phone = cleanPhone.startsWith('0') ? '966' + cleanPhone.slice(1) : cleanPhone
+
+      setSalonWaLink(`https://wa.me/${SALON.whatsapp}?text=${encodeURIComponent(invoice)}`)
+      setClientWaLink(`https://wa.me/${phone}?text=${encodeURIComponent(clientMsg)}`)
+      setStep(4)
+
+    } catch (err) {
+      setError('حدث خطأ أثناء الحجز، حاولي مرة أخرى')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -84,14 +125,12 @@ export default function BookPage() {
       <div className="max-w-2xl mx-auto px-4 py-8">
         <div className="bg-white rounded-2xl shadow-sm border border-rose-100 overflow-hidden">
 
-          {/* Header */}
           <div className="bg-rose-600 text-white p-6 text-center">
             <div className="text-4xl mb-2">💇‍♀️</div>
             <h1 className="text-xl font-bold">{SALON.name}</h1>
             <p className="text-rose-100 text-sm mt-1">احجزي موعدك بسهولة</p>
           </div>
 
-          {/* Steps indicator */}
           {step < 4 && (
             <div className="flex border-b border-rose-50">
               {['الخدمة', 'التاريخ', 'بياناتك'].map((s, i) => (
@@ -107,7 +146,7 @@ export default function BookPage() {
 
           <div className="p-6">
 
-            {/* Step 1: اختيار الخدمة */}
+            {/* Step 1 */}
             {step === 1 && (
               <div>
                 <h2 className="font-bold text-lg mb-4 text-gray-800">اختاري الخدمة</h2>
@@ -129,7 +168,7 @@ export default function BookPage() {
               </div>
             )}
 
-            {/* Step 2: اختيار التاريخ والوقت */}
+            {/* Step 2 */}
             {step === 2 && (
               <div>
                 <h2 className="font-bold text-lg mb-4 text-gray-800">اختاري التاريخ</h2>
@@ -179,7 +218,7 @@ export default function BookPage() {
               </div>
             )}
 
-            {/* Step 3: بيانات العميلة */}
+            {/* Step 3 */}
             {step === 3 && (
               <div>
                 <h2 className="font-bold text-lg mb-4 text-gray-800">بياناتك</h2>
@@ -220,24 +259,31 @@ export default function BookPage() {
                   </div>
                 </div>
 
+                {error && (
+                  <div className="mt-4 p-3 bg-red-50 border border-red-100 rounded-xl text-red-600 text-sm text-center">
+                    {error}
+                  </div>
+                )}
+
                 <div className="flex gap-3 mt-6">
                   <button onClick={() => setStep(2)} className="flex-1 border border-rose-200 text-rose-600 font-medium py-3 rounded-xl">
                     → رجوع
                   </button>
-                  <button onClick={sendWhatsApp} disabled={!clientName || !clientPhone}
+                  <button onClick={confirmBooking} disabled={!clientName || !clientPhone || loading}
                     className="flex-1 bg-green-500 hover:bg-green-600 disabled:bg-gray-200 disabled:text-gray-400 text-white font-medium py-3 rounded-xl transition-colors">
-                    💬 تأكيد الحجز
+                    {loading ? '⏳ جاري الحجز...' : '✅ تأكيد الحجز'}
                   </button>
                 </div>
               </div>
             )}
 
-            {/* Step 4: تأكيد */}
+            {/* Step 4 */}
             {step === 4 && selectedDay !== null && (
               <div className="text-center py-6">
                 <div className="text-6xl mb-4">🎉</div>
-                <h2 className="text-xl font-bold text-gray-800 mb-2">تم تأكيد حجزك!</h2>
-                <p className="text-gray-500 text-sm mb-6">اضغطي على الزر لإرسال التفاصيل عبر واتساب</p>
+                <h2 className="text-xl font-bold text-gray-800 mb-2">تم استلام طلب حجزك!</h2>
+                <p className="text-gray-500 text-sm mb-2">⏳ سيتم تأكيد موعدك من الصالون قريباً</p>
+                <p className="text-gray-400 text-xs mb-6">اضغطي لإرسال تفاصيل الحجز عبر واتساب</p>
 
                 <div className="bg-rose-50 rounded-xl p-5 text-right space-y-3 text-sm mb-6">
                   <div className="flex justify-between">
@@ -265,11 +311,11 @@ export default function BookPage() {
                 <div className="space-y-3">
                   <a href={salonWaLink} target="_blank" rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-xl transition-colors">
-                    💬 إرسال للصالون عبر واتساب
+                    💬 إرسال طلب الحجز للصالون
                   </a>
                   <a href={clientWaLink} target="_blank" rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2 w-full bg-green-100 hover:bg-green-200 text-green-700 font-medium py-3 rounded-xl transition-colors">
-                    📱 إرسال الفاتورة لجوالي
+                    📱 إرسال تفاصيل الحجز لجوالي
                   </a>
                   <Link href="/" className="block w-full border border-rose-200 text-rose-600 font-medium py-3 rounded-xl text-center">
                     العودة للرئيسية
