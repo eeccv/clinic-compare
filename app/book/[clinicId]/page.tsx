@@ -44,8 +44,6 @@ export default function BookPage({ params }: { params: { clinicId: string } }) {
   const [selectedService, setSelectedService] = useState<string | null>(null)
   const [clientName, setClientName] = useState('')
   const [clientPhone, setClientPhone] = useState('')
-  const [salonWaLink, setSalonWaLink] = useState('')
-  const [clientWaLink, setClientWaLink] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -54,7 +52,7 @@ export default function BookPage({ params }: { params: { clinicId: string } }) {
 
   const confirmBooking = async () => {
     if (selectedDay === null || !selectedTime || !selectedService || !clientName || !clientPhone) return
-    
+
     setLoading(true)
     setError('')
 
@@ -62,7 +60,6 @@ export default function BookPage({ params }: { params: { clinicId: string } }) {
       const day = days[selectedDay]
       const bookingDate = new Date(day.date)
 
-      // حفظ الحجز في قاعدة البيانات
       const res = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -79,30 +76,6 @@ export default function BookPage({ params }: { params: { clinicId: string } }) {
 
       if (!res.ok) throw new Error('فشل الحجز')
 
-      // بناء رسائل واتساب
-      const invoice =
-        `🌸 *طلب موعد جديد — ${SALON.name}*\n\n` +
-        `👤 الاسم: ${clientName}\n` +
-        `📱 الجوال: ${clientPhone}\n` +
-        `✂️ الخدمة: ${selectedService}\n` +
-        `📅 التاريخ: ${day.label} ${day.day} ${day.month}\n` +
-        `🕐 الوقت: ${selectedTime}\n` +
-        `💰 السعر: ${service?.price} ريال\n\n` +
-        `يرجى تأكيد الموعد 💕`
-
-      const clientMsg =
-        `🌸 *تم استلام طلب حجزك في ${SALON.name}*\n\n` +
-        `✂️ الخدمة: ${selectedService}\n` +
-        `📅 التاريخ: ${day.label} ${day.day} ${day.month}\n` +
-        `🕐 الوقت: ${selectedTime}\n` +
-        `💰 السعر: ${service?.price} ريال\n\n` +
-        `⏳ سيتم تأكيد موعدك قريباً من الصالون`
-
-      const cleanPhone = clientPhone.replace(/\D/g, '')
-      const phone = cleanPhone.startsWith('0') ? '966' + cleanPhone.slice(1) : cleanPhone
-
-      setSalonWaLink(`https://wa.me/${SALON.whatsapp}?text=${encodeURIComponent(invoice)}`)
-      setClientWaLink(`https://wa.me/${phone}?text=${encodeURIComponent(clientMsg)}`)
       setStep(4)
 
     } catch (err) {
@@ -280,10 +253,9 @@ export default function BookPage({ params }: { params: { clinicId: string } }) {
             {/* Step 4 */}
             {step === 4 && selectedDay !== null && (
               <div className="text-center py-6">
-                <div className="text-6xl mb-4">🎉</div>
+                <div className="text-6xl mb-4">✅</div>
                 <h2 className="text-xl font-bold text-gray-800 mb-2">تم استلام طلب حجزك!</h2>
-                <p className="text-gray-500 text-sm mb-2">⏳ سيتم تأكيد موعدك من الصالون قريباً</p>
-                <p className="text-gray-400 text-xs mb-6">اضغطي لإرسال تفاصيل الحجز عبر واتساب</p>
+                <p className="text-gray-500 text-sm mb-6">⏳ سيتم التواصل معك بعد تأكيد الصالون للموعد</p>
 
                 <div className="bg-rose-50 rounded-xl p-5 text-right space-y-3 text-sm mb-6">
                   <div className="flex justify-between">
@@ -308,19 +280,9 @@ export default function BookPage({ params }: { params: { clinicId: string } }) {
                   </div>
                 </div>
 
-                <div className="space-y-3">
-                  <a href={salonWaLink} target="_blank" rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-xl transition-colors">
-                    💬 إرسال طلب الحجز للصالون
-                  </a>
-                  <a href={clientWaLink} target="_blank" rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 w-full bg-green-100 hover:bg-green-200 text-green-700 font-medium py-3 rounded-xl transition-colors">
-                    📱 إرسال تفاصيل الحجز لجوالي
-                  </a>
-                  <Link href="/" className="block w-full border border-rose-200 text-rose-600 font-medium py-3 rounded-xl text-center">
-                    العودة للرئيسية
-                  </Link>
-                </div>
+                <Link href="/" className="block w-full bg-rose-600 text-white font-medium py-3 rounded-xl text-center">
+                  العودة للرئيسية
+                </Link>
               </div>
             )}
 
