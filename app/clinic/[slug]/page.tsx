@@ -51,11 +51,10 @@ export default function SalonPage({ params }: { params: { slug: string } }) {
   }))
 
   return (
-    <main className="min-h-screen bg-cream" dir="rtl">
-      {/* Navbar */}
+    <main className="min-h-screen bg-gray-50" dir="rtl">
       <nav className="bg-white border-b border-rose-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center gap-3">
-          <Link href="/" className="text-xl font-bold text-rose-600">💅 صالوني</Link>
+          <Link href="/" className="text-xl font-bold text-rose-600">صالوني</Link>
           <span className="text-gray-300">/</span>
           <Link href="/search" className="text-sm text-gray-500 hover:text-rose-600">البحث</Link>
           <span className="text-gray-300">/</span>
@@ -64,19 +63,18 @@ export default function SalonPage({ params }: { params: { slug: string } }) {
       </nav>
 
       <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* Hero Card */}
         <div className="card p-6 mb-6">
           <div className="flex gap-6 items-start">
-            <div className="w-24 h-24 bg-rose-50 rounded-2xl flex items-center justify-center text-5xl flex-shrink-0">
-              💇‍♀️
+            <div className="w-24 h-24 bg-rose-50 rounded-2xl flex items-center justify-center flex-shrink-0">
+              <span className="text-2xl font-bold text-rose-300">{salon.name[0]}</span>
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
                 <h1 className="text-2xl font-bold text-gray-800">{salon.name}</h1>
-                {salon.verified && <span className="badge-verified">✓ موثق</span>}
-                {salon.featured && <span className="badge-featured">⭐ مميز</span>}
+                {salon.verified && <span className="badge-verified">موثق</span>}
+                {salon.featured && <span className="badge-featured">مميز</span>}
               </div>
-              <p className="text-gray-500 text-sm mb-3">📍 {salon.address}</p>
+              <p className="text-gray-500 text-sm mb-3">{salon.address}</p>
               <p className="text-gray-600 leading-relaxed">{salon.description}</p>
               <div className="flex gap-4 mt-4">
                 <div className="flex items-center gap-1">
@@ -89,20 +87,16 @@ export default function SalonPage({ params }: { params: { slug: string } }) {
             <div className="flex flex-col gap-2">
               <a href={`/book/${salon.id}`}
                 className="bg-rose-600 hover:bg-rose-700 text-white text-sm py-2 px-5 rounded-xl text-center transition-colors">
-                📅 احجزي
+                احجزي
               </a>
             </div>
           </div>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
-          {/* Main Content */}
           <div className="md:col-span-2 space-y-6">
-            {/* Services & Prices */}
             <div className="card p-6">
-              <h2 className="text-xl font-bold mb-5 flex items-center gap-2">
-                ✂️ الخدمات والأسعار
-              </h2>
+              <h2 className="text-xl font-bold mb-5">الخدمات والأسعار</h2>
               <div className="space-y-3">
                 {salon.services.map((s, i) => (
                   <div key={i} className="flex items-center justify-between p-4 bg-rose-50 rounded-xl border border-rose-100">
@@ -111,26 +105,21 @@ export default function SalonPage({ params }: { params: { slug: string } }) {
                       {s.notes && <div className="text-xs text-gray-400 mt-0.5">{s.notes}</div>}
                     </div>
                     <div className="text-left">
-                      <div className="font-bold text-rose-600 text-lg">
-                        {s.price.toLocaleString()} ريال
-                      </div>
-                      {s.priceMax && (
-                        <div className="text-xs text-gray-400">حتى {s.priceMax.toLocaleString()} ريال</div>
-                      )}
+                      <div className="font-bold text-rose-600 text-lg">{s.price.toLocaleString()} ريال</div>
+                      {s.priceMax && <div className="text-xs text-gray-400">حتى {s.priceMax.toLocaleString()} ريال</div>}
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Staff */}
             <div className="card p-6">
-              <h2 className="text-xl font-bold mb-5">👩‍🎨 فريق العمل</h2>
+              <h2 className="text-xl font-bold mb-5">فريق العمل</h2>
               <div className="grid grid-cols-2 gap-4">
                 {salon.staff.map(member => (
                   <div key={member.id} className="bg-rose-50 rounded-xl p-4 text-center border border-rose-100">
-                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-3xl mx-auto mb-3">
-                      👩‍🎨
+                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-xl font-bold text-rose-300 mx-auto mb-3">
+                      {member.name[0]}
                     </div>
                     <div className="font-bold text-gray-800">{member.name}</div>
                     <div className="text-sm text-rose-600 mt-1">{member.specialty}</div>
@@ -142,9 +131,8 @@ export default function SalonPage({ params }: { params: { slug: string } }) {
               </div>
             </div>
 
-            {/* Reviews */}
             <div className="card p-6">
-              <h2 className="text-xl font-bold mb-5">⭐ تقييمات العميلات</h2>
+              <h2 className="text-xl font-bold mb-5">تقييمات العميلات</h2>
               <div className="flex gap-6 mb-6 p-4 bg-rose-50 rounded-xl">
                 <div className="text-center">
                   <div className="text-5xl font-bold text-gray-800">{salon.avgRating}</div>
@@ -168,7 +156,7 @@ export default function SalonPage({ params }: { params: { slug: string } }) {
                   <div key={rev.id} className="border-b border-rose-50 pb-4 last:border-0">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-rose-100 rounded-full flex items-center justify-center text-sm">
+                        <div className="w-8 h-8 bg-rose-100 rounded-full flex items-center justify-center text-sm font-bold text-rose-400">
                           {rev.author[0]}
                         </div>
                         <span className="font-medium text-sm">{rev.author}</span>
@@ -185,35 +173,29 @@ export default function SalonPage({ params }: { params: { slug: string } }) {
             </div>
           </div>
 
-          {/* Sidebar */}
           <div className="space-y-4">
             <div className="card p-5">
               <h3 className="font-bold mb-4">معلومات التواصل</h3>
               <div className="space-y-3 text-sm">
                 {salon.phone && (
                   <div className="flex items-center gap-3">
-                    <span>📞</span>
                     <a href={`tel:${salon.phone}`} className="text-rose-600 hover:underline">{salon.phone}</a>
                   </div>
                 )}
                 {salon.whatsapp && (
                   <div className="flex items-center gap-3">
-                    <span>💬</span>
                     <a href={`https://wa.me/${salon.whatsapp.replace(/\D/g,'')}`} className="text-green-600 hover:underline">واتساب</a>
                   </div>
                 )}
-                <div className="flex items-center gap-3">
-                  <span>📍</span>
-                  <span className="text-gray-600">{salon.address}</span>
-                </div>
+                <div className="text-gray-600">{salon.address}</div>
               </div>
             </div>
 
             <div className="card p-5 bg-rose-600 text-white border-0">
               <h3 className="font-bold mb-2">احجزي موعدك الآن</h3>
-              <p className="text-rose-100 text-sm mb-4">احجزي مباشرة عبر واتساب بسهولة</p>
+              <p className="text-rose-100 text-sm mb-4">احجزي مباشرة بسهولة</p>
               <a href={`/book/${salon.id}`} className="bg-white text-rose-600 font-medium py-2 px-4 rounded-lg text-sm block text-center hover:bg-rose-50 transition-colors">
-                📅 احجزي الآن ←
+                احجزي الآن
               </a>
             </div>
           </div>

@@ -52,14 +52,10 @@ export default function BookPage({ params }: { params: { clinicId: string } }) {
 
   const confirmBooking = async () => {
     if (selectedDay === null || !selectedTime || !selectedService || !clientName || !clientPhone) return
-
     setLoading(true)
     setError('')
-
     try {
       const day = days[selectedDay]
-      const bookingDate = new Date(day.date)
-
       const res = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -67,18 +63,15 @@ export default function BookPage({ params }: { params: { clinicId: string } }) {
           clinicId: SALON.id,
           clientName,
           clientPhone,
-          date: bookingDate.toISOString(),
+          date: new Date(day.date).toISOString(),
           time: selectedTime,
           serviceName: selectedService,
           totalPrice: service?.price,
         }),
       })
-
       if (!res.ok) throw new Error('فشل الحجز')
-
       setStep(4)
-
-    } catch (err) {
+    } catch {
       setError('حدث خطأ أثناء الحجز، حاولي مرة أخرى')
     } finally {
       setLoading(false)
@@ -89,7 +82,7 @@ export default function BookPage({ params }: { params: { clinicId: string } }) {
     <main className="min-h-screen bg-gray-50" dir="rtl">
       <nav className="bg-white border-b border-rose-100 sticky top-0 z-50">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-3">
-          <Link href="/" className="text-xl font-bold text-rose-600">💅 صالوني</Link>
+          <Link href="/" className="text-xl font-bold text-rose-600">صالوني</Link>
           <span className="text-gray-300">/</span>
           <span className="text-sm text-gray-600">حجز موعد</span>
         </div>
@@ -99,7 +92,6 @@ export default function BookPage({ params }: { params: { clinicId: string } }) {
         <div className="bg-white rounded-2xl shadow-sm border border-rose-100 overflow-hidden">
 
           <div className="bg-rose-600 text-white p-6 text-center">
-            <div className="text-4xl mb-2">💇‍♀️</div>
             <h1 className="text-xl font-bold">{SALON.name}</h1>
             <p className="text-rose-100 text-sm mt-1">احجزي موعدك بسهولة</p>
           </div>
@@ -119,7 +111,6 @@ export default function BookPage({ params }: { params: { clinicId: string } }) {
 
           <div className="p-6">
 
-            {/* Step 1 */}
             {step === 1 && (
               <div>
                 <h2 className="font-bold text-lg mb-4 text-gray-800">اختاري الخدمة</h2>
@@ -136,12 +127,11 @@ export default function BookPage({ params }: { params: { clinicId: string } }) {
                 </div>
                 <button onClick={() => setStep(2)} disabled={!selectedService}
                   className="w-full mt-6 bg-rose-600 hover:bg-rose-700 disabled:bg-gray-200 disabled:text-gray-400 text-white font-medium py-3 rounded-xl transition-colors">
-                  التالي — اختاري الموعد ←
+                  التالي
                 </button>
               </div>
             )}
 
-            {/* Step 2 */}
             {step === 2 && (
               <div>
                 <h2 className="font-bold text-lg mb-4 text-gray-800">اختاري التاريخ</h2>
@@ -171,7 +161,7 @@ export default function BookPage({ params }: { params: { clinicId: string } }) {
                               selectedTime === t ? 'border-rose-500 bg-rose-50 text-rose-600' :
                               'border-gray-100 hover:border-rose-200 text-gray-700'
                             }`}>
-                            {booked ? '🚫' : '🕐'} {t}
+                            {booked ? 'محجوز' : t}
                           </button>
                         )
                       })}
@@ -181,17 +171,16 @@ export default function BookPage({ params }: { params: { clinicId: string } }) {
 
                 <div className="flex gap-3 mt-6">
                   <button onClick={() => setStep(1)} className="flex-1 border border-rose-200 text-rose-600 font-medium py-3 rounded-xl">
-                    → رجوع
+                    رجوع
                   </button>
                   <button onClick={() => setStep(3)} disabled={selectedDay === null || !selectedTime}
                     className="flex-1 bg-rose-600 hover:bg-rose-700 disabled:bg-gray-200 disabled:text-gray-400 text-white font-medium py-3 rounded-xl transition-colors">
-                    التالي ←
+                    التالي
                   </button>
                 </div>
               </div>
             )}
 
-            {/* Step 3 */}
             {step === 3 && (
               <div>
                 <h2 className="font-bold text-lg mb-4 text-gray-800">بياناتك</h2>
@@ -240,22 +229,20 @@ export default function BookPage({ params }: { params: { clinicId: string } }) {
 
                 <div className="flex gap-3 mt-6">
                   <button onClick={() => setStep(2)} className="flex-1 border border-rose-200 text-rose-600 font-medium py-3 rounded-xl">
-                    → رجوع
+                    رجوع
                   </button>
                   <button onClick={confirmBooking} disabled={!clientName || !clientPhone || loading}
                     className="flex-1 bg-green-500 hover:bg-green-600 disabled:bg-gray-200 disabled:text-gray-400 text-white font-medium py-3 rounded-xl transition-colors">
-                    {loading ? '⏳ جاري الحجز...' : '✅ تأكيد الحجز'}
+                    {loading ? 'جاري الحجز...' : 'تأكيد الحجز'}
                   </button>
                 </div>
               </div>
             )}
 
-            {/* Step 4 */}
             {step === 4 && selectedDay !== null && (
               <div className="text-center py-6">
-                <div className="text-6xl mb-4">✅</div>
                 <h2 className="text-xl font-bold text-gray-800 mb-2">تم استلام طلب حجزك!</h2>
-                <p className="text-gray-500 text-sm mb-6">⏳ سيتم التواصل معك بعد تأكيد الصالون للموعد</p>
+                <p className="text-gray-500 text-sm mb-6">سيتم التواصل معك بعد تأكيد الصالون للموعد</p>
 
                 <div className="bg-rose-50 rounded-xl p-5 text-right space-y-3 text-sm mb-6">
                   <div className="flex justify-between">
